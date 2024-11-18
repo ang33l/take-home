@@ -2,16 +2,20 @@ import { create } from "zustand";
 import { ListItem } from "./api/getListData";
 
 type State = {
-    cards: ListItem[]
+    cards: ListItem[],
+    deletedCards: ListItem[]
 };
 
 type Actions = {
     initCards: (cards: ListItem[]) => void,
-    toggleCardVisibility: (cardId: number) => void
+    toggleCardVisibility: (cardId: number) => void,
+    deleteCard: (cardId: number) => void,
 };
 
 export const useStore = create<State & Actions>((set) => ({
     cards: [],
+    deletedCards: [],
+
     initCards: (cards) => set({ cards }),
     toggleCardVisibility: (cardId) => set((state) => ({
         cards: state.cards.map((card) => {
@@ -23,6 +27,10 @@ export const useStore = create<State & Actions>((set) => ({
             }
             return card;
         })
-
+    })),
+    deleteCard: (cardId) => set((state) => ({
+        cards: state.cards.filter((card) => card.id !== cardId),
+        deletedCards: [...state.deletedCards, ...state.cards.filter((card) => card.id === cardId)]
     }))
+
 }));
