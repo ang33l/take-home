@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import { ListItem, useGetListData } from "../api/getListData";
 import { Card } from "./List";
 import { Spinner } from "./Spinner";
+import { useStore } from "../store";
 
 export const Entrypoint = () => {
-  const [visibleCards, setVisibleCards] = useState<ListItem[]>([]);
+  const { cards, initCards } = useStore();
   const listQuery = useGetListData();
 
   // TOOD
@@ -15,7 +16,7 @@ export const Entrypoint = () => {
       return;
     }
 
-    setVisibleCards(listQuery.data?.filter((item) => item.isVisible) ?? []);
+    initCards(listQuery.data ?? []);
   }, [listQuery.data, listQuery.isLoading]);
 
   if (listQuery.isLoading) {
@@ -25,10 +26,10 @@ export const Entrypoint = () => {
   return (
     <div className="flex gap-x-16">
       <div className="w-full max-w-xl">
-        <h1 className="mb-1 font-medium text-lg">My Awesome List ({visibleCards.length})</h1>
+        <h1 className="mb-1 font-medium text-lg">My Awesome List ({cards.length})</h1>
         <div className="flex flex-col gap-y-3">
-          {visibleCards.map((card) => (
-            <Card key={card.id} title={card.title} description={card.description} />
+          {cards.map((card) => (
+            <Card key={card.id} card={card} />
           ))}
         </div>
       </div>
